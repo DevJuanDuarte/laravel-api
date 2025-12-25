@@ -19,7 +19,12 @@ class LoginController extends Controller
         $request->authenticate();
 
         $user = $request->user();
-        $token = $user->createToken('main')->plainTextToken;
+        
+        // Crear token con fecha de expiración
+        $expirationMinutes = (int) config('sanctum.expiration', 1440);
+        $expiresAt = now()->addMinutes($expirationMinutes);
+        
+        $token = $user->createToken('main', ['*'], $expiresAt)->plainTextToken;
 
         return [
             'user' => new UserResource($user),
