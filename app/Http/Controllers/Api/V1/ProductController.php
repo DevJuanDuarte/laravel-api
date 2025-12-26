@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductResource;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Http\Resources\ProductResource;
-use App\Models\Product;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ProductController extends Controller
@@ -32,7 +33,7 @@ class ProductController extends Controller
             $query->whereColumn('stock', '<=', 'min_stock');
         }
 
-        $products = $query->latest()->paginate(15);
+        $products = $query->orderByDesc('id')->paginate(15);
 
         return ProductResource::collection($products);
     }
@@ -56,6 +57,7 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, Product $product): ProductResource
     {
+        Log::info('Update product payload', $request->all());
         $product->update($request->validated());
         $product->load('category');
 
