@@ -66,6 +66,9 @@ test('can search products', function () {
 });
 
 test('can filter low stock products', function () {
+    // Limpiar productos existentes para este test
+    Product::query()->delete();
+    
     Product::factory()->create(['stock' => 5, 'min_stock' => 10, 'category_id' => $this->category->id]);
     Product::factory()->create(['stock' => 50, 'min_stock' => 10, 'category_id' => $this->category->id]);
 
