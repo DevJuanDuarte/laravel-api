@@ -18,6 +18,12 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
+            'locale' => \App\Http\Middleware\SetLocale::class,
+        ]);
+
+        // Aplicar el middleware de idioma globalmente a las rutas API
+        $middleware->api(append: [
+            \App\Http\Middleware\SetLocale::class,
         ]);
 
         //

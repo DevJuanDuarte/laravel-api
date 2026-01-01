@@ -115,6 +115,9 @@ test('sale generates invoice number', function () {
 });
 
 test('can filter sales by status', function () {
+    // Limpiar ventas existentes para este test
+    Sale::query()->delete();
+    
     Sale::factory()->create(['user_id' => $this->user->id, 'status' => 'completed']);
     Sale::factory()->create(['user_id' => $this->user->id, 'status' => 'pending']);
 
