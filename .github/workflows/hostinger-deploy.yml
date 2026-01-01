@@ -169,6 +169,7 @@ jobs:
           extensions: mbstring, xml, bcmath, pdo_mysql
 
       - name: Download Built Assets
+        if: needs.build-assets.result == 'success'
         uses: actions/download-artifact@v4
         with:
           name: build-assets
