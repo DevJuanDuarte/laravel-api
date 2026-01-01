@@ -38,7 +38,12 @@ class LoginController extends Controller
     public function destroy(Request $request): Response
     { 
         $user = $request->user();
-        $user->currentAccessToken()->delete();
+        
+        // Eliminar token de Sanctum
+        if ($user && $user->currentAccessToken()) {
+            $user->currentAccessToken()->delete();
+        }
+        
         return response()->noContent();
     }
 }
