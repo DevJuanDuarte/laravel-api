@@ -16,6 +16,7 @@ class ProductController extends Controller
 {
     public function index(Request $request): AnonymousResourceCollection
     {
+        // Se trae en la variablr $query todos los produtos con su categoria
         $query = Product::with('category');
 
         if ($request->filled('category_id')) {
