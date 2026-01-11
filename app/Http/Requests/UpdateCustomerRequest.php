@@ -13,9 +13,13 @@ class UpdateCustomerRequest extends FormRequest
 
     public function rules(): array
     {
+        // Obtener el ID del cliente desde la ruta
+        $customer = $this->route('customer');
+        $customerId = $customer instanceof \App\Models\Customer ? $customer->id : $customer;
+        
         return [
             'name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255', 'unique:customers,email,' . $this->route('customer')],
+            'email' => ['nullable', 'email', 'max:255', 'unique:customers,email,' . $customerId],
             'phone' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string'],
             'document_type' => ['nullable', 'string', 'max:50'],
