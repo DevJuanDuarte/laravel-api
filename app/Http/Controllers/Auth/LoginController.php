@@ -18,18 +18,14 @@ class LoginController extends Controller
     {
         $request->authenticate();
 
-        $user = $request->user();
-        
-        // Crear token con fecha de expiración
-        $expirationMinutes = (int) config('sanctum.expiration', 1440);
-        $expiresAt = now()->addMinutes($expirationMinutes);
-        
-        $token = $user->createToken('main', ['*'], $expiresAt)->plainTextToken;
+        // Regenerar el ID de sesión para prevenir session fixation
+        $request->session()->regenerate();
 
-        return [
-            'user' => new UserResource($user),
-            'token' => $token,
-        ];
+        $user = $request->user();
+
+        return response()->json([
+            'user' => $user,
+        ]);
     }
 
     /**
@@ -37,12 +33,10 @@ class LoginController extends Controller
      */
     public function destroy(Request $request): Response
     { 
-        $user = $request->user();
-        
-        // Eliminar token de Sanctum
-        if ($user && $user->currentAccessToken()) {
-            $user->currentAccessToken()->delete();
-        }
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         
         return response()->noContent();
     }

@@ -21,5 +21,3 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::apiResource('sales', SaleController::class);
     });
 });
-
-require __DIR__ . '/auth.php';
