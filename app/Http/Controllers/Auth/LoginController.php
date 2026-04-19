@@ -18,13 +18,14 @@ class LoginController extends Controller
     {
         $request->authenticate();
 
-        // Regenerar el ID de sesión para prevenir session fixation
-        $request->session()->regenerate();
-
         $user = $request->user();
+
+        // Generar token de Sanctum para API
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'user' => $user,
+            'token' => $token,
         ]);
     }
 
@@ -33,10 +34,8 @@ class LoginController extends Controller
      */
     public function destroy(Request $request): Response
     { 
-        Auth::guard('web')->logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        // Revocar el token actual de Sanctum
+        $request->user()->currentAccessToken()->delete();
         
         return response()->noContent();
     }
