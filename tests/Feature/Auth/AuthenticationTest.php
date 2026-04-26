@@ -11,7 +11,10 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $response->assertOk()
-        ->assertJsonStructure(['user', 'token']);
+        ->assertJsonStructure(['user']);  // Ya no devuelve token - usa cookie HttpOnly
+    
+    // Verificar que el usuario está autenticado
+    $this->assertAuthenticated();
 });
 
 test('users can not authenticate with invalid password', function () {
@@ -28,14 +31,14 @@ test('users can not authenticate with invalid password', function () {
 test('users can logout', function () {
     $user = User::factory()->create();
     
-    // Autenticar usando Sanctum (simular token API)
-    $token = $user->createToken('test')->plainTextToken;
+    // Autenticar usando sesión (como SPA)
+    $this->actingAs($user);
 
-    $response = $this->withToken($token)->postJson('/api/logout');
+    $response = $this->postJson('/api/logout');
 
     // Verificar que el logout fue exitoso
     $response->assertNoContent();
     
-    // Verificar que el token fue eliminado
-    expect($user->tokens()->count())->toBe(0);
+    // Verificar que el usuario ya no está autenticado
+    $this->assertGuest();
 });
